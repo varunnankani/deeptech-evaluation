@@ -6,60 +6,65 @@
     const SUPABASE_PUBLISHABLE_KEY =
         "sb_publishable_waqQ29I8lrQsCczVPuKfdg_rqZY0igd";
 
-    const ACCESS_KEY = "deeptech_thesis_access_v1";
-    const VISITOR_ID_KEY = "deeptech_thesis_visitor_id_v1";
+
+    /*
+     * v2 is intentional.
+     *
+     * Anyone who previously entered an email
+     * will see the new name prompt once.
+     */
+    const ACCESS_KEY =
+        "deeptech_thesis_access_v2";
+
+    const VISITOR_ID_KEY =
+        "deeptech_thesis_visitor_id_v2";
 
 
     /*
-     * We deliberately do not store the email itself
-     * inside localStorage.
+     * Create a random ID for the visitor.
      *
-     * Instead we create a stable SHA-256 identifier.
+     * We do NOT use the person's name as their
+     * PostHog ID because two people can share
+     * the same name.
      */
-    async function createVisitorId(email) {
+    function getOrCreateVisitorId() {
 
-        const normalizedEmail =
-            email.trim().toLowerCase();
-
-        const encoded =
-            new TextEncoder().encode(normalizedEmail);
-
-        const hashBuffer =
-            await crypto.subtle.digest(
-                "SHA-256",
-                encoded
+        let visitorId =
+            localStorage.getItem(
+                VISITOR_ID_KEY
             );
 
-        const hashArray =
-            Array.from(
-                new Uint8Array(hashBuffer)
-            );
+        if (!visitorId) {
 
-        return hashArray
-            .map(
-                byte =>
-                    byte
-                        .toString(16)
-                        .padStart(2, "0")
-            )
-            .join("");
+            visitorId =
+                crypto.randomUUID();
+
+            localStorage.setItem(
+                VISITOR_ID_KEY,
+                visitorId
+            );
+        }
+
+        return visitorId;
     }
 
 
     /*
-     * If the visitor has already entered their email
-     * on this device, do not show the gate again.
-     *
-     * Re-identify them to PostHog using the stable
-     * hashed ID.
+     * If the visitor has already entered
+     * their name on this device, do not
+     * show the gate again.
      */
     function restoreExistingVisitor() {
 
         const accessGranted =
-            localStorage.getItem(ACCESS_KEY);
+            localStorage.getItem(
+                ACCESS_KEY
+            );
 
         const visitorId =
-            localStorage.getItem(VISITOR_ID_KEY);
+            localStorage.getItem(
+                VISITOR_ID_KEY
+            );
 
         if (
             accessGranted === "true" &&
@@ -68,7 +73,9 @@
 
             if (window.posthog) {
 
-                posthog.identify(visitorId);
+                posthog.identify(
+                    visitorId
+                );
 
             }
 
@@ -82,11 +89,13 @@
     function injectStyles() {
 
         const style =
-            document.createElement("style");
+            document.createElement(
+                "style"
+            );
 
         style.textContent = `
 
-            #thesis-email-gate {
+            #thesis-name-gate {
                 position: fixed;
                 inset: 0;
                 z-index: 999999;
@@ -221,7 +230,9 @@
 
         `;
 
-        document.head.appendChild(style);
+        document.head.appendChild(
+            style
+        );
     }
 
 
@@ -230,9 +241,13 @@
         injectStyles();
 
         const gate =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
-        gate.id = "thesis-email-gate";
+        gate.id =
+            "thesis-name-gate";
+
 
         gate.innerHTML = `
 
@@ -254,38 +269,39 @@
                 </h1>
 
                 <p class="thesis-gate-description">
-                    Enter your email to view the
+                    Enter your name to view the
                     DeepTech investment thesis on
-                    physical intelligence, Octobotics
-                    and PierSight.
+                    physical intelligence,
+                    Octobotics and PierSight.
                 </p>
 
-                <form id="thesis-email-form">
+                <form id="thesis-name-form">
 
                     <input
-                        id="thesis-email-input"
-                        type="email"
-                        placeholder="Email address"
-                        autocomplete="email"
+                        id="thesis-name-input"
+                        type="text"
+                        placeholder="Your name"
+                        autocomplete="name"
+                        minlength="2"
                         required
                     >
 
                     <button
-                        id="thesis-email-button"
+                        id="thesis-name-button"
                         type="submit"
                     >
                         View thesis
                     </button>
 
                     <div
-                        id="thesis-email-error"
+                        id="thesis-name-error"
                         class="thesis-gate-error"
                     ></div>
 
                 </form>
 
                 <p class="thesis-gate-privacy">
-                    Your email and site interactions
+                    Your name and site interactions
                     are used only to understand
                     readership of this thesis.
                 </p>
@@ -294,16 +310,23 @@
 
         `;
 
-        document.body.appendChild(gate);
+
+        document.body.appendChild(
+            gate
+        );
 
         document.body.style.overflow =
             "hidden";
 
 
+        /*
+         * Track people who reach the gate,
+         * including those who do not submit.
+         */
         if (window.posthog) {
 
             posthog.capture(
-                "thesis_email_gate_viewed",
+                "thesis_name_gate_viewed",
                 {
                     page:
                         window.location.pathname
@@ -315,22 +338,22 @@
 
         const form =
             document.getElementById(
-                "thesis-email-form"
+                "thesis-name-form"
             );
 
         const input =
             document.getElementById(
-                "thesis-email-input"
+                "thesis-name-input"
             );
 
         const button =
             document.getElementById(
-                "thesis-email-button"
+                "thesis-name-button"
             );
 
         const errorBox =
             document.getElementById(
-                "thesis-email-error"
+                "thesis-name-error"
             );
 
 
@@ -340,7 +363,9 @@
 
                 event.preventDefault();
 
-                errorBox.textContent = "";
+                errorBox.textContent =
+                    "";
+
 
                 if (!input.checkValidity()) {
 
@@ -350,13 +375,22 @@
                 }
 
 
-                const email =
+                const name =
                     input.value
-                        .trim()
-                        .toLowerCase();
+                        .trim();
 
 
-                button.disabled = true;
+                if (name.length < 2) {
+
+                    errorBox.textContent =
+                        "Please enter your name.";
+
+                    return;
+                }
+
+
+                button.disabled =
+                    true;
 
                 button.textContent =
                     "Opening thesis...";
@@ -365,14 +399,15 @@
                 try {
 
                     /*
-                     * Store email in Supabase
+                     * Store the name in Supabase.
                      */
                     const response =
                         await fetch(
                             SUPABASE_URL +
                             "/rest/v1/thesis_visitors",
                             {
-                                method: "POST",
+                                method:
+                                    "POST",
 
                                 headers: {
 
@@ -388,7 +423,7 @@
 
                                 body:
                                     JSON.stringify({
-                                        email: email,
+                                        name: name,
 
                                         source_page:
                                             window
@@ -409,39 +444,39 @@
                         const message =
                             await response.text();
 
-                        throw new Error(message);
-
+                        throw new Error(
+                            message
+                        );
                     }
 
 
                     /*
-                     * Create stable pseudonymous
-                     * identifier for PostHog.
+                     * Create or retrieve a random
+                     * visitor ID.
                      */
                     const visitorId =
-                        await createVisitorId(
-                            email
-                        );
+                        getOrCreateVisitorId();
 
 
                     /*
-                     * Identify the anonymous visitor.
-                     * PostHog associates prior
-                     * anonymous events with this
-                     * identified profile.
+                     * Identify this visitor in
+                     * PostHog.
                      */
                     if (window.posthog) {
 
                         posthog.identify(
                             visitorId,
                             {
-                                email: email
+                                name: name
                             }
                         );
 
+
                         posthog.capture(
-                            "thesis_email_submitted",
+                            "thesis_name_submitted",
                             {
+                                name: name,
+
                                 page:
                                     window
                                         .location
@@ -453,17 +488,12 @@
 
 
                     /*
-                     * Remember access without storing
-                     * the raw email in localStorage.
+                     * Remember that this device
+                     * already passed the gate.
                      */
                     localStorage.setItem(
                         ACCESS_KEY,
                         "true"
-                    );
-
-                    localStorage.setItem(
-                        VISITOR_ID_KEY,
-                        visitorId
                     );
 
 
@@ -476,14 +506,17 @@
                 } catch (error) {
 
                     console.error(
-                        "Email submission failed:",
+                        "Name submission failed:",
                         error
                     );
+
 
                     errorBox.textContent =
                         "Unable to continue. Please try again.";
 
-                    button.disabled = false;
+
+                    button.disabled =
+                        false;
 
                     button.textContent =
                         "View thesis";
@@ -500,9 +533,13 @@
         /*
          * Existing visitor.
          */
-        if (restoreExistingVisitor()) {
+        if (
+            restoreExistingVisitor()
+        ) {
+
             return;
         }
+
 
         /*
          * New visitor.
@@ -512,7 +549,8 @@
 
 
     if (
-        document.readyState === "loading"
+        document.readyState ===
+        "loading"
     ) {
 
         document.addEventListener(
