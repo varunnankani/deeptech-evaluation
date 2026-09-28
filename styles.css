@@ -911,3 +911,212 @@ video {
     transform: none;
   }
 }
+/* =========================================================
+   MOBILE POLISH - DENSER, MORE NATIVE MOBILE EXPERIENCE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+  /* -----------------------------------------
+     HOMEPAGE HERO
+     ----------------------------------------- */
+
+  .home-hero {
+    padding-top: 42px;
+    padding-bottom: 46px;
+  }
+
+  .home-hero-copy h1 {
+    font-size: 42px;
+    line-height: 0.98;
+    margin-top: 14px;
+  }
+
+  .home-intro {
+    font-size: 15px;
+    line-height: 1.55;
+    margin-top: 18px;
+  }
+
+  .home-thesis-statement {
+    padding: 18px 0;
+    margin: 6px 0 20px;
+  }
+
+  .home-thesis-statement p {
+    font-size: 18px;
+    line-height: 1.45;
+  }
+
+
+  /* -----------------------------------------
+     SECTION SPACING
+     ----------------------------------------- */
+
+  .section,
+  .content-section {
+    padding-top: 46px;
+    padding-bottom: 46px;
+  }
+
+  .proof-section {
+    padding-top: 44px;
+    padding-bottom: 48px;
+  }
+
+
+  /* -----------------------------------------
+     THESIS / UNDERWRITING CARDS
+     ----------------------------------------- */
+
+  .thesis-box {
+    padding: 22px 20px;
+  }
+
+  .thesis-box > span {
+    font-size: 10px;
+  }
+
+  .thesis-box h3 {
+    font-size: 20px;
+    line-height: 1.2;
+    margin: 18px 0 9px;
+  }
+
+  .thesis-box p {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+
+  .underwrite-grid article {
+    padding: 21px 20px;
+  }
+
+  .underwrite-grid h3 {
+    margin: 17px 0 8px;
+    font-size: 17px;
+  }
+
+  .underwrite-grid p {
+    font-size: 13.5px;
+    line-height: 1.55;
+  }
+
+
+  /* -----------------------------------------
+     PROOF / TRACTION CARDS
+     ----------------------------------------- */
+
+  .proof-grid article {
+    padding: 20px;
+  }
+
+  .proof-grid strong {
+    font-size: 24px;
+    margin: 14px 0 8px;
+  }
+
+  .proof-grid p {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+
+  /* -----------------------------------------
+     COMPETITOR CARDS
+     ----------------------------------------- */
+
+  .competitor-card {
+    padding: 20px 18px;
+  }
+
+  .competitor-card h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .competitor-card p {
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+  .comp-kicker {
+    margin-bottom: 10px;
+  }
+
+  .comp-stats {
+    margin: 12px 0;
+    gap: 4px 10px;
+  }
+
+  .comp-stats b {
+    font-size: 22px;
+  }
+
+  .comp-stats span {
+    font-size: 12px;
+    line-height: 1.35;
+  }
+
+  .mini-sources {
+    margin-top: 12px;
+  }
+
+
+  /* -----------------------------------------
+     FOUNDER QUESTIONS
+     ----------------------------------------- */
+
+  .founder-grid article {
+    padding: 20px;
+  }
+
+  .founder-grid p {
+    margin-top: 12px;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+
+
+  /* -----------------------------------------
+     CONTENT HEADINGS
+     ----------------------------------------- */
+
+  .content-head h2,
+  .company-qa-heading h2 {
+    font-size: 30px;
+    line-height: 1.05;
+  }
+
+  .content-head p {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+
+  /* -----------------------------------------
+     SOURCE LINKS
+     ----------------------------------------- */
+
+  .source-row a,
+  .mini-sources a {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+
+  /* -----------------------------------------
+     REMOVE DESKTOP-LIKE EMPTY SPACE
+     ----------------------------------------- */
+
+  .thesis-box,
+  .proof-grid article,
+  .underwrite-grid article,
+  .competitor-card,
+  .founder-grid article,
+  .dated-grid article {
+    min-height: 0 !important;
+  }
+
+}
